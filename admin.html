@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Админка PRO_YXOD_KZ</title>
+<meta name="theme-color" content="#2E3B2C">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%232E3B2C'/%3E%3Ctext x='32' y='41' font-size='26' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3EP%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--milk:#F5F7F2;--paper:#fff;--sage:#8FA382;--sage-2:#E4EBDD;--sage-3:#CBD7C1;--moss:#2E3B2C;--moss-2:#5D6B59;--line:#D9E1D1;
+  --in:#2F7A3B;--order-bg:#F0D27A;--order-ink:#3D2F05;--out:#6B7068;--danger:#B3261E;
+  --display:'Unbounded','Manrope',system-ui,sans-serif;--body:'Manrope',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--milk);color:var(--moss);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--sage);outline-offset:2px;border-radius:8px}
+[hidden]{display:none!important}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;text-decoration:none}
+.btn-dark{background:var(--moss);color:var(--milk)}
+.btn-light{background:var(--sage-2);color:var(--moss)}
+.btn-danger{background:none;color:var(--danger);padding-left:0;padding-right:0}
+.btn:disabled{opacity:.6;cursor:wait}
+input,select,textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;background:var(--paper)}
+textarea{resize:vertical}
+label.f{display:grid;gap:5px;font-weight:600;font-size:14px}
+label.f small{font-weight:500;color:var(--moss-2)}
+
+/* Экран входа и настройки */
+.center{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.panel{width:min(420px,100%);background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:26px 22px;display:grid;gap:14px}
+.panel h1{font:600 22px/1.2 var(--display);margin:0}
+.panel p{margin:0;color:var(--moss-2)}
+.err{color:var(--danger);font-weight:600;margin:0}
+.setup ol{margin:0;padding-left:20px;display:grid;gap:6px}
+code{background:var(--sage-2);padding:1px 6px;border-radius:6px;font-size:13px}
+
+/* Шапка */
+.top{position:sticky;top:0;z-index:10;background:rgba(245,247,242,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;height:60px}
+.top b{font:600 16px var(--display)}
+.top nav{display:flex;gap:6px;align-items:center}
+.top nav a,.top nav button{font-weight:600;font-size:14px;padding:8px 10px;border-radius:10px;border:0;background:none;cursor:pointer;text-decoration:none;color:inherit}
+.top nav a:hover,.top nav button:hover{background:var(--sage-2)}
+
+main{padding:18px 0 100px}
+h2{font:600 22px/1.2 var(--display);margin:0 0 4px}
+.sub{color:var(--moss-2);margin:0 0 16px}
+
+.stats{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin:0 -16px 12px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+.stats::-webkit-scrollbar{display:none}
+.stat{flex:0 0 auto;border:1.5px solid var(--line);background:var(--paper);border-radius:14px;padding:8px 14px;cursor:pointer;text-align:left}
+.stat b{display:block;font:600 18px var(--display)}
+.stat span{font-size:13px;color:var(--moss-2);font-weight:600}
+.stat.on{background:var(--moss);border-color:var(--moss);color:var(--milk)}
+.stat.on span{color:var(--sage-3)}
+
+.tools{display:grid;grid-template-columns:1fr 180px auto;gap:8px;margin-bottom:14px}
+@media(max-width:640px){.tools{grid-template-columns:1fr 1fr}.tools input{grid-column:1/-1}}
+
+.list{display:grid;gap:10px}
+.row{display:grid;grid-template-columns:60px 1fr auto;gap:12px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:12px}
+.row.hid{opacity:.6}
+.thumb{width:60px;height:60px;border-radius:12px;overflow:hidden;background:var(--tint);position:relative;padding:4px}
+.thumb svg{height:100%;width:auto;margin:0 auto;display:block}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.r-name{font-weight:700;line-height:1.3;margin:0}
+.r-meta{font-size:13px;color:var(--moss-2);margin:2px 0 0}
+.r-meta b{color:var(--moss)}
+.r-side{display:flex;align-items:center;gap:8px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--sage-2);border-radius:12px;padding:3px;min-width:300px}
+.seg button{border:0;background:none;border-radius:9px;padding:9px 6px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"].in{background:var(--in);color:#fff}
+.seg button[aria-pressed="true"].order{background:var(--order-bg);color:var(--order-ink)}
+.seg button[aria-pressed="true"].out{background:var(--out);color:#fff}
+.price-wrap{position:relative;display:block}.price-wrap span{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--moss-2);pointer-events:none}
+.price-in{width:120px;padding:9px 28px 9px 10px;text-align:right;font-weight:700}
+.del-row{color:var(--danger);background:#F6E3E1}
+.edit{border:0;background:var(--sage-2);border-radius:10px;padding:9px 12px;font-weight:700;font-size:13px;cursor:pointer}
+@media(max-width:760px){
+  .row{grid-template-columns:60px 1fr}
+  .r-side{grid-column:1/-1;display:grid;gap:8px}
+  .seg{grid-column:1/-1;min-width:0}
+  .price-in{width:100%}.r-side{grid-template-columns:1fr auto auto}
+}
+.empty{background:var(--sage-2);border-radius:16px;padding:24px;text-align:center}
+
+/* Окно товара */
+dialog{border:0;padding:0;background:var(--milk);color:var(--moss);width:min(640px,calc(100% - 24px));border-radius:22px;max-height:92vh}
+dialog::backdrop{background:rgba(46,59,44,.5)}
+@media(max-width:640px){dialog{width:100%;max-width:100%;max-height:100%;height:100%;border-radius:0;margin:0}}
+.dlg{display:flex;flex-direction:column;max-height:inherit;height:100%}
+.dlg-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dlg-head h3{margin:0;font:600 18px var(--display)}
+.x{width:38px;height:38px;border-radius:50%;border:0;background:var(--sage-2);font-size:20px;cursor:pointer}
+.dlg-body{padding:16px 18px;overflow:auto;display:grid;gap:14px}
+.dlg-foot{padding:12px 18px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--paper)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.photo-box{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center}
+.photo-prev{width:110px;height:110px;border-radius:16px;background:var(--tint);position:relative;overflow:hidden;padding:8px}
+.photo-prev svg{height:100%;width:auto;margin:0 auto;display:block}
+.photo-prev img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-btns{display:flex;flex-wrap:wrap;gap:8px}
+.goals{display:flex;flex-wrap:wrap;gap:6px}
+.goals label{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;background:var(--paper);font-weight:600;font-size:13px;cursor:pointer}
+.goals input{width:auto;margin:0}
+.check{display:flex;align-items:center;gap:10px;font-weight:600}
+.check input{width:20px;height:20px}
+.looks{display:grid;grid-template-columns:1fr 90px;gap:12px}
+input[type=color]{height:46px;padding:4px}
+
+.toast{position:fixed;left:50%;top:70px;transform:translate(-50%,-10px);opacity:0;pointer-events:none;background:var(--moss);color:var(--milk);border-radius:12px;padding:10px 16px;font-weight:700;transition:.2s;z-index:50}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.bad{background:var(--danger)}
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9;box-shadow:0 10px 26px rgba(46,59,44,.3);padding:14px 20px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- Нет ключей Supabase -->
+<section class="center" id="setup" hidden>
+  <div class="panel setup">
+    <h1>Админка ещё не подключена</h1>
+    <p>Чтобы управлять товарами, подключите базу данных Supabase:</p>
+    <ol>
+      <li>Выполните скрипт <code>supabase-setup.sql</code> в Supabase → SQL Editor.</li>
+      <li>Создайте пользователя в Authentication → Users.</li>
+      <li>Впишите Project URL и anon key в файл <code>data.js</code>.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- Вход -->
+<section class="center" id="login" hidden>
+  <form class="panel" id="loginForm">
+    <h1>Вход в админку</h1>
+    <p>PRO_YXOD_KZ: наличие, цены и товары</p>
+    <a href="./" style="font-weight:600;color:var(--moss)">Вернуться на сайт</a>
+    <label class="f" id="emailWrap">Почта<input id="email" type="email" autocomplete="username"></label>
+    <label class="f">Пароль <small>вводите английскими буквами</small><input id="pass" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required></label>
+    <p class="err" id="loginErr" hidden></p>
+    <button class="btn btn-dark" type="submit" id="loginBtn">Войти</button>
+  </form>
+</section>
+
+<!-- Админка -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="wrap">
+      <b>Админка</b>
+      <nav><a href="./" target="_blank" rel="noopener">Открыть сайт</a><button type="button" id="logout">Выйти</button></nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <h2>Товары</h2>
+    <p class="sub">Отмечайте наличие и меняйте цену прямо в списке. Изменения сразу видны на сайте.</p>
+    <div class="stats" id="stats"></div>
+    <div class="tools">
+      <input id="q" type="search" placeholder="Поиск по названию или бренду" aria-label="Поиск">
+      <select id="cat" aria-label="Раздел"></select>
+      <button class="btn btn-dark" type="button" id="addTop">Добавить товар</button>
+    </div>
+    <div class="list" id="list"><p class="empty">Загружаем товары…</p></div>
+  </main>
+  <button class="btn btn-dark fab" type="button" id="addFab" aria-label="Добавить товар">+ Добавить товар</button>
+</div>
+
+<!-- Карточка товара -->
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <form class="dlg" id="form" novalidate>
+    <div class="dlg-head"><h3 id="dlgTitle">Товар</h3><button class="x" type="button" data-close aria-label="Закрыть">×</button></div>
+    <div class="dlg-body">
+      <div class="photo-box">
+        <div class="photo-prev" id="pPrev"></div>
+        <div>
+          <div class="photo-btns">
+            <label class="btn btn-light" for="pFile">Загрузить фото</label>
+            <button class="btn btn-light" type="button" id="pRemove">Убрать фото</button>
+          </div>
+          <input id="pFile" type="file" accept="image/*" hidden>
+          <p class="sub" style="margin:8px 0 0;font-size:13px">Без фото на сайте показывается рисунок флакона.</p>
+        </div>
+      </div>
+      <label class="f">Название<input id="fName" required placeholder="Например: Крем Z Cure Cream"></label>
+      <div class="two">
+        <label class="f">Бренд<input id="fBrand" list="brandList" placeholder="Celimax"></label>
+        <label class="f">Раздел<select id="fCat"></select></label>
+      </div>
+      <div class="two">
+        <label class="f">Цена, ₸ <small>0 — «цена по запросу»</small><input id="fPrice" type="number" min="0" step="10" inputmode="numeric"></label>
+        <label class="f">Объём<input id="fVol" placeholder="50 мл"></label>
+      </div>
+      <div class="f" style="display:grid;gap:5px;font-weight:600;font-size:14px">Наличие
+        <div class="seg" id="fStock" role="group" aria-label="Наличие" style="min-width:0">
+          <button type="button" class="in" data-v="in">В наличии</button>
+          <button type="button" class="order" data-v="order">Под заказ</button>
+          <button type="button" class="out" data-v="out">Нет</button>
+        </div>
+      </div>
+      <label class="f" id="daysWrap">Срок доставки под заказ <small>необязательно</small><input id="fDays" placeholder="Например: 10–14 дней"></label>
+      <label class="f">Описание<textarea id="fDesc" rows="2" placeholder="Одно-два предложения о товаре"></textarea></label>
+      <label class="f">Преимущества <small>каждое с новой строки</small><textarea id="fPerks" rows="3" placeholder="Глубоко увлажняет&#10;Подходит для чувствительной кожи"></textarea></label>
+      <div class="f" style="display:grid;gap:6px;font-weight:600;font-size:14px">Задачи кожи <small style="font-weight:500;color:var(--moss-2)">по ним покупатели фильтруют каталог</small>
+        <div class="goals" id="fGoals"></div>
+      </div>
+      <label class="f">Главный компонент <small>метка на карточке, коротко</small><input id="fKey" maxlength="16" placeholder="PDRN, Ретинол, Нони"></label>
+      <div class="looks">
+        <label class="f">Рисунок без фото<select id="fShape"></select></label>
+        <label class="f">Цвет<input id="fColor" type="color"></label>
+      </div>
+      <label class="check"><input id="fHidden" type="checkbox"> Скрыть с сайта</label>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn btn-danger" type="button" id="del">Удалить товар</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-light" type="button" data-close>Отмена</button>
+        <button class="btn btn-dark" type="submit" id="save">Сохранить</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+<datalist id="brandList"></datalist>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="data.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+let sb = null, items = [];
+const view = { f: "all", cat: "all", q: "" };
+let edit = null;          // редактируемый товар
+let newPhoto = null;      // выбранный файл фото (Blob)
+
+/* ---------- Сообщения ---------- */
+let tt;
+function toast(msg, bad){ const t = $("#toast"); t.textContent = msg; t.classList.toggle("bad", !!bad); t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), bad ? 4000 : 1600); }
+function explain(error){
+  const m = (error && (error.message || error.error_description)) || "";
+  if (/Invalid login/i.test(m)) return ADMIN_EMAIL ? "Неверный пароль. Проверьте, что включена английская раскладка" : "Неверная почта или пароль";
+  if (/JWT|expired|not authenticated/i.test(m)) return "Сессия истекла. Войдите заново";
+  if (/Failed to fetch|NetworkError/i.test(m)) return "Нет связи с базой. Проверьте интернет";
+  return "Не получилось сохранить: " + (m || "неизвестная ошибка");
+}
+const show = id => ["setup","login","app"].forEach(x => $("#" + x).hidden = x !== id);
+
+/* ---------- Старт и вход ---------- */
+(async () => {
+  sb = await getSb();
+  if (!sb) return show("setup");
+  const { data } = await sb.auth.getSession();
+  if (ADMIN_EMAIL) { $("#emailWrap").hidden = true; $("#email").value = ADMIN_EMAIL; }
+  data.session ? openApp() : (show("login"), $(ADMIN_EMAIL ? "#pass" : "#email").focus());
+  sb.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_OUT") show("login"); });
+})();
+
+$("#loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const btn = $("#loginBtn"); btn.disabled = true; $("#loginErr").hidden = true;
+  const email = (ADMIN_EMAIL || $("#email").value).trim();
+  if (!email) { btn.disabled = false; $("#loginErr").textContent = "Впишите почту"; $("#loginErr").hidden = false; return; }
+  const { error } = await sb.auth.signInWithPassword({ email, password: $("#pass").value });
+  btn.disabled = false;
+  if (error) { $("#loginErr").textContent = explain(error); $("#loginErr").hidden = false; return; }
+  openApp();
+});
+$("#logout").addEventListener("click", () => sb.auth.signOut());
+
+async function openApp(){
+  show("app");
+  $("#cat").innerHTML = `<option value="all">Все разделы</option>` + CATS.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+  $("#fCat").innerHTML = CATS.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+  $("#fShape").innerHTML = Object.entries(SHAPES).map(([k,v]) => `<option value="${k}">${v}</option>`).join("");
+  $("#fGoals").innerHTML = Object.entries(GOALS).map(([k,v]) => `<label><input type="checkbox" value="${k}">${v}</label>`).join("");
+  await load();
+}
+
+async function load(){
+  const { data, error } = await sb.from("products").select("*").order("sort");
+  if (error) { $("#list").innerHTML = `<p class="empty">${esc(explain(error))}</p>`; return; }
+  if (!data.length && !load.seeded) {
+    load.seeded = true;
+    $("#list").innerHTML = `<p class="empty">Первый вход: загружаем товары в базу…</p>`;
+    const ins = await sb.from("products").insert(PRODUCTS.map(toDb)).select("id");
+    if (ins.error) { $("#list").innerHTML = `<p class="empty">${esc(explain(ins.error))}</p>`; return; }
+    return load();
+  }
+  items = data.map(fromDb);
+  $("#brandList").innerHTML = [...new Set(items.map(p => p.brand).filter(Boolean))].sort().map(b => `<option value="${esc(b)}">`).join("");
+  render();
+}
+
+/* ---------- Список ---------- */
+function render(){
+  const n = f => items.filter(f).length;
+  const stats = [
+    ["all","Все", n(p => true)], ["in","В наличии", n(p => p.stock==="in")], ["order","Под заказ", n(p => p.stock==="order")],
+    ["out","Нет", n(p => p.stock==="out")], ["hidden","Скрытые", n(p => p.hidden)]
+  ];
+  $("#stats").innerHTML = stats.map(([k,label,c]) => `<button class="stat ${view.f===k?"on":""}" type="button" data-f="${k}" aria-pressed="${view.f===k}"><b>${c}</b><span>${label}</span></button>`).join("");
+
+  const q = view.q.trim().toLowerCase();
+  const list = items.filter(p =>
+    (view.cat === "all" || p.cat === view.cat) &&
+    (view.f === "all" || (view.f === "hidden" ? p.hidden : p.stock === view.f)) &&
+    (!q || (p.brand + " " + p.name).toLowerCase().includes(q)));
+
+  $("#list").innerHTML = list.length ? list.map(row).join("") :
+    `<p class="empty">${items.length ? "Ничего не нашлось. Измените фильтр или поиск." : "Товаров пока нет. Нажмите «Добавить товар»."}</p>`;
+}
+
+function seg(p){
+  return `<div class="seg" role="group" aria-label="Наличие: ${esc(p.name)}">` +
+    Object.entries({ in:"В наличии", order:"Под заказ", out:"Нет" }).map(([k,v]) =>
+      `<button type="button" class="${k}" data-stock="${k}" data-id="${p.id}" aria-pressed="${p.stock===k}">${v}</button>`).join("") + `</div>`;
+}
+function row(p){
+  const cat = CATS.find(c => c.id === p.cat);
+  return `<div class="row ${p.hidden?"hid":""}" data-row="${p.id}">
+    <div class="thumb" style="--tint:${tint(p.color)}">${art(p)}${photoTag(p)}</div>
+    <div>
+      <p class="r-name">${esc(p.name)}</p>
+      <p class="r-meta">${esc(p.brand || "Без бренда")}${cat ? ", " + cat.name : ""}${p.hidden ? ", <b>скрыт</b>" : ""}</p>
+    </div>
+    <div class="r-side">
+      ${seg(p)}
+      <label class="price-wrap"><input class="price-in" type="number" min="0" step="10" inputmode="numeric" value="${p.price}" data-price="${p.id}" aria-label="Цена в тенге: ${esc(p.name)}"><span>₸</span></label>
+      <button class="edit" type="button" data-edit="${p.id}">Изменить</button>
+      <button class="edit del-row" type="button" data-delrow="${p.id}">Удалить</button>
+    </div>
+  </div>`;
+}
+
+/* ---------- Быстрые изменения из списка ---------- */
+async function patch(id, fields, okMsg){
+  const { data, error } = await sb.from("products").update({ ...fields, updated_at: new Date().toISOString() }).eq("id", id).select("id");
+  if (error || !data || !data.length) { toast(error ? explain(error) : "Нет прав на изменение. Войдите заново", true); return false; }
+  toast(okMsg); return true;
+}
+
+document.addEventListener("click", async e => {
+  const t = e.target.closest("[data-f],[data-stock],[data-edit],[data-delrow],[data-close]");
+  if (!t) return;
+  const d = t.dataset;
+  if (d.f) { view.f = d.f; render(); }
+  else if (d.stock && d.id) {
+    const p = items.find(x => x.id === d.id); if (!p || p.stock === d.stock) return;
+    const old = p.stock; p.stock = d.stock;
+    t.parentElement.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.stock === d.stock));
+    if (!await patch(p.id, { stock: d.stock }, STOCK[d.stock] + ": сохранено")) p.stock = old;
+    render();
+  }
+  else if (d.edit) openEdit(items.find(x => x.id === d.edit));
+  else if (d.delrow) {
+    if (!t.dataset.armed) {
+      t.dataset.armed = "1"; t.textContent = "Точно удалить?";
+      setTimeout(() => { if (t.isConnected) { t.dataset.armed = ""; t.textContent = "Удалить"; } }, 4000);
+      return;
+    }
+    const { data, error } = await sb.from("products").delete().eq("id", d.delrow).select("id");
+    if (error || !data || !data.length) return toast(error ? explain(error) : "Нет прав на удаление. Войдите заново", true);
+    items = items.filter(x => x.id !== d.delrow); render(); toast("Товар удалён");
+  }
+  else if (d.close !== undefined) $("#dlg").close();
+});
+
+document.addEventListener("change", async e => {
+  const el = e.target;
+  if (!el.dataset.price) return;
+  const p = items.find(x => x.id === el.dataset.price);
+  const v = Math.max(0, Math.round(Number(el.value) || 0));
+  if (!p || v === p.price) return;
+  const old = p.price; p.price = v; el.value = v;
+  if (!await patch(p.id, { price: v }, "Цена сохранена: " + (v ? fmt(v) : "по запросу"))) { p.price = old; el.value = old; }
+});
+document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.dataset.price) e.target.blur(); });
+
+$("#q").addEventListener("input", e => { view.q = e.target.value; render(); });
+$("#cat").addEventListener("change", e => { view.cat = e.target.value; render(); });
+$("#addTop").addEventListener("click", () => openEdit(null));
+$("#addFab").addEventListener("click", () => openEdit(null));
+
+/* ---------- Карточка товара: добавление и редактирование ---------- */
+let formStock = "order";
+function setFormStock(v){
+  formStock = v;
+  $("#fStock").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v));
+  $("#daysWrap").hidden = v !== "order";
+}
+$("#fStock").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setFormStock(b.dataset.v); });
+
+function previewPhoto(){
+  const draft = { color: $("#fColor").value, shape: $("#fShape").value };
+  const src = newPhoto ? URL.createObjectURL(newPhoto) : edit && edit._photo;
+  $("#pPrev").style.setProperty("--tint", tint(draft.color));
+  $("#pPrev").innerHTML = art(draft) + (src ? `<img src="${esc(src)}" alt="">` : "");
+  $("#pRemove").hidden = !src;
+}
+$("#fColor").addEventListener("input", previewPhoto);
+$("#fShape").addEventListener("change", previewPhoto);
+
+function openEdit(p){
+  const isNew = !p;
+  edit = p ? { ...p, _photo: p.photo } : { _photo: "" };
+  newPhoto = null;
+  $("#dlgTitle").textContent = isNew ? "Новый товар" : "Изменить товар";
+  $("#fName").value = p?.name || "";
+  $("#fBrand").value = p?.brand || "";
+  $("#fCat").value = p?.cat || (view.cat !== "all" ? view.cat : CATS[0].id);
+  $("#fPrice").value = p ? p.price : "";
+  $("#fVol").value = p?.vol || "";
+  $("#fDays").value = p?.days || "";
+  $("#fDesc").value = p?.desc || "";
+  $("#fPerks").value = (p?.perks || []).join("\n");
+  $("#fKey").value = p?.key || "";
+  $("#fShape").value = p?.shape || "tube";
+  $("#fColor").value = safeColor(p?.color);
+  $("#fHidden").checked = !!p?.hidden;
+  $("#fGoals").querySelectorAll("input").forEach(i => i.checked = !!p?.goals.includes(i.value));
+  setFormStock(p?.stock || "in");
+  $("#del").hidden = isNew;
+  resetDel();
+  previewPhoto();
+  $("#dlg").showModal();
+  if (isNew) $("#fName").focus();
+}
+
+/* Фото: уменьшаем до 1200 px перед загрузкой */
+async function shrink(file){
+  try {
+    const img = await createImageBitmap(file);
+    const k = Math.min(1, 1200 / Math.max(img.width, img.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    return await new Promise(r => c.toBlob(r, "image/jpeg", .85));
+  } catch(e){ return file; }
+}
+$("#pFile").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = "";
+  if (!f) return;
+  if (!f.type.startsWith("image/")) return toast("Выберите картинку", true);
+  newPhoto = await shrink(f);
+  previewPhoto();
+});
+$("#pRemove").addEventListener("click", () => { newPhoto = null; edit._photo = ""; previewPhoto(); });
+
+$("#form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const name = $("#fName").value.trim();
+  if (!name) { toast("Впишите название товара", true); $("#fName").focus(); return; }
+  const btn = $("#save"); btn.disabled = true; btn.textContent = "Сохраняем…";
+  try {
+    const isNew = !edit.id;
+    const id = edit.id || "p" + Date.now().toString(36);
+    let photo = edit._photo || "";
+    if (newPhoto) {
+      const path = `${id}-${Date.now()}.jpg`;
+      const up = await sb.storage.from("photos").upload(path, newPhoto, { contentType: "image/jpeg", upsert: true });
+      if (up.error) throw up.error;
+      photo = sb.storage.from("photos").getPublicUrl(path).data.publicUrl;
+    }
+    const p = {
+      id, name, photo,
+      brand: $("#fBrand").value.trim(), cat: $("#fCat").value, vol: $("#fVol").value.trim(),
+      price: Math.max(0, Math.round(Number($("#fPrice").value) || 0)),
+      stock: formStock, days: formStock === "order" ? $("#fDays").value.trim() : (edit.days || ""),
+      desc: $("#fDesc").value.trim(), perks: $("#fPerks").value.split("\n").map(s => s.trim()).filter(Boolean),
+      goals: [...$("#fGoals").querySelectorAll("input:checked")].map(i => i.value),
+      key: $("#fKey").value.trim(), shape: $("#fShape").value, color: $("#fColor").value,
+      hidden: $("#fHidden").checked,
+      sort: isNew ? (items.reduce((m,x) => Math.max(m, x.sort), 0) + 1) : edit.sort
+    };
+    const q = isNew ? sb.from("products").insert(toDb(p)).select("id") : sb.from("products").update(toDb(p)).eq("id", id).select("id");
+    const { data, error } = await q;
+    if (error) throw error;
+    if (!data || !data.length) throw new Error("Нет прав на изменение. Войдите заново");
+    if (isNew) items.push(p); else items[items.findIndex(x => x.id === id)] = p;
+    $("#dlg").close();
+    render();
+    toast(isNew ? "Товар добавлен" : "Сохранено");
+  } catch(err){ toast(explain(err), true); }
+  finally { btn.disabled = false; btn.textContent = "Сохранить"; }
+});
+
+/* Удаление: нужно нажать дважды */
+let delTimer;
+function resetDel(){ clearTimeout(delTimer); const b = $("#del"); b.dataset.armed = ""; b.textContent = "Удалить товар"; }
+$("#del").addEventListener("click", async () => {
+  const b = $("#del");
+  if (!b.dataset.armed) { b.dataset.armed = "1"; b.textContent = "Нажмите ещё раз, чтобы удалить"; delTimer = setTimeout(resetDel, 4000); return; }
+  resetDel();
+  const { data, error } = await sb.from("products").delete().eq("id", edit.id).select("id");
+  if (error || !data || !data.length) return toast(error ? explain(error) : "Нет прав на удаление. Войдите заново", true);
+  items = items.filter(x => x.id !== edit.id);
+  $("#dlg").close(); render(); toast("Товар удалён");
+});
+$("#dlg").addEventListener("click", e => { if (e.target === $("#dlg")) $("#dlg").close(); });
+</script>
+</body>
+</html>
