@@ -183,6 +183,27 @@ const PRODUCTS = [
     desc:"Коллаген в стиках-желе со вкусом вишни.", perks:["Большая упаковка","Удобно взять с собой"] }
 ].map((p, i) => ({ stock: "order", days: "", photo: "", hidden: false, sort: i, ...p }));
 
+/* Фото товаров (файлы лежат в папке img). Клиентка может заменить любое фото в админке. */
+const PHOTOS = {
+  c17: "img/c17.jpg",
+  c9: "img/c9.jpg",
+  c2: "img/c2.jpg",
+  t1: "img/t1.jpg",
+  c1: "img/c1.jpg",
+  c12: "img/c12.jpg",
+  t3: "img/t3.jpg",
+  t4: "img/t4.jpg",
+  c18: "img/c18.jpg",
+  c11: "img/c11.jpg",
+  c19: "img/c19.jpg",
+  s10: "img/s10.jpg",
+  p1: "img/p1.jpg",
+  f17: "img/f17.jpg",
+  s4: "img/s4.jpg"
+};
+PRODUCTS.forEach(p => { if (!p.photo && PHOTOS[p.id]) p.photo = PHOTOS[p.id]; });
+const LOCAL_PHOTO = Object.fromEntries(PRODUCTS.filter(p => p.photo).map(p => [p.id, p.photo]));
+
 /* ====================== служебное ====================== */
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 const safeColor = c => /^#[0-9a-f]{6}$/i.test(c || "") ? c : "#8FA382";
@@ -200,9 +221,9 @@ const stockText = p => p.stock === "order" && p.days ? `Под заказ, ${p.d
 /* Строка базы ↔ товар */
 const fromDb = r => ({ id:r.id, cat:r.cat, brand:r.brand||"", name:r.name||"", vol:r.vol||"", price:Number(r.price)||0,
   shape:r.shape||"tube", color:safeColor(r.color), key:r.key||"", goals:r.goals||[], desc:r.descr||"", perks:r.perks||[],
-  photo:r.photo||"", stock:r.stock||"order", days:r.order_days||"", hidden:!!r.hidden, sort:r.sort||0 });
+  photo: r.photo === "-" ? "" : (r.photo || LOCAL_PHOTO[r.id] || ""), stock:r.stock||"order", days:r.order_days||"", hidden:!!r.hidden, sort:r.sort||0 });
 const toDb = p => ({ id:p.id, cat:p.cat, brand:p.brand, name:p.name, vol:p.vol, price:p.price, shape:p.shape, color:p.color,
-  key:p.key, goals:p.goals, descr:p.desc, perks:p.perks, photo:p.photo, stock:p.stock, order_days:p.days, hidden:p.hidden,
+  key:p.key, goals:p.goals, descr:p.desc, perks:p.perks, photo:p.photo || "-", stock:p.stock, order_days:p.days, hidden:p.hidden,
   sort:p.sort, updated_at:new Date().toISOString() });
 
 /* Подключение к Supabase (библиотека грузится только если ключи заполнены) */
